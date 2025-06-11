@@ -1,0 +1,58 @@
+Development Log: June 12, 2025
+A summary of development tasks completed for the Ecosys Training Center Enrollment System.
+
+Phase 1: Project Analysis & Security Review
+Time: ~00:29 (Asia/Manila)
+
+Task: Performed a comprehensive analysis of the existing PHP MVC application structure, database schema, and core logic based on the provided files.
+
+Outcome: Identified the application's architecture and pinpointed several high-risk security vulnerabilities, including hardcoded database credentials in config.php and potential information disclosure in scp_command.txt.
+
+Phase 2: Feature Implementation - Secure Roles API
+Time: ~00:30 (Asia/Manila)
+
+Task: Developed a new, secure REST API for managing user roles, isolating it from the main web controllers.
+
+Key Features & Files Created/Modified:
+
+app/controllers/RoleApiController.php: A new controller to handle all role-related API requests (GET, POST, PUT, DELETE).
+
+app/helpers/jwt_helper.php: A new helper class to manage the creation and validation of JSON Web Tokens (JWT) for secure authentication.
+
+app/controllers/ApiController.php: Modified to issue JWTs upon successful admin login and to route /api/roles requests.
+
+app/config/config.php: Updated to include new constants for the JWT secret key and token expiration time.
+
+Phase 3: Debugging & Integration
+Time: ~00:30 - 00:43 (Asia/Manila)
+
+Task: Systematically addressed a series of fatal errors and deprecation notices that occurred during the integration and testing of the new API endpoints.
+
+Fixes Implemented:
+
+Resolved (00:29): Creation of dynamic property... is deprecated in ApiController.php.
+
+Action: Explicitly declared the $userModel property within the class to conform with modern PHP standards.
+
+Resolved (00:30): Failed to open stream: No such file or directory for vendor/autoload.php.
+
+Action: Corrected the file path in jwt_helper.php to properly locate the Composer autoloader from the project's root directory.
+
+Resolved (00:33): class ApiController does not have a method "index" when accessing the api/roles endpoint.
+
+Action: Implemented a roles() method in ApiController to act as a dispatcher, correctly forwarding requests to the new RoleApiController.
+
+Resolved (00:42): Call to undefined method Role::addRole() on POST requests.
+
+Action: Implemented the missing addRole(), updateRole(), and deleteRole() methods in the Role.php model, completing the CRUD functionality.
+
+Phase 4: Documentation
+Time: Ongoing
+
+Task: Created and updated documentation for the new API features to ensure proper usage and testing.
+
+Deliverables:
+
+Updated README.md to include detailed instructions on how to use the new secure API.
+
+Added a step-by-step guide within the README.md for testing all API endpoints using Postman.

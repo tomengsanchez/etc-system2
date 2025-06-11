@@ -1,0 +1,8 @@
+[12-Jun-2025 00:42:31 Asia/Manila] Uncaught Exception: Call to undefined method Role::addRole() in /home/uskujc2375lw/ithelp.ecosyscorp.ph/etc-system/app/controllers/RoleApiController.php:112
+Stack trace:
+#0 /home/uskujc2375lw/ithelp.ecosyscorp.ph/etc-system/app/controllers/RoleApiController.php(45): RoleApiController->createRole()
+#1 /home/uskujc2375lw/ithelp.ecosyscorp.ph/etc-system/app/controllers/ApiController.php(65): RoleApiController->index()
+#2 /home/uskujc2375lw/ithelp.ecosyscorp.ph/etc-system/app/core/App.php(42): ApiController->roles()
+#3 /home/uskujc2375lw/ithelp.ecosyscorp.ph/etc-system/public/index.php(98): App->__construct()
+#4 {main}
+---
