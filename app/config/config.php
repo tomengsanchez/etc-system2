@@ -33,3 +33,9 @@
   spl_autoload_register(function($className){
     require_once APPROOT . '/core/' . $className . '.php';
   });
+
+
+    // JWT Secret Key
+  define('JWT_SECRET', 'TEAMPOGI'); // <-- IMPORTANT: Change this to a long, random string
+  // JWT Expiration Time (in seconds)
+  define('JWT_EXP', 3600); // 1 hour
