@@ -1,72 +1,54 @@
 <?php
-  // Start session
-  session_start();
+// Start session only if one isn't already active
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-  // Flash message helper
-  // EXAMPLE - flash('register_success', 'You are now registered');
-  // DISPLAY IN VIEW - echo flash('register_success');
-  function flash($name = '', $message = '', $class = 'alert alert-success'){
-    if(!empty($name)){
-      if(!empty($message) && empty($_SESSION[$name])){
-        if(!empty($_SESSION[$name])){
-          unset($_SESSION[$name]);
-        }
-
-        if(!empty($_SESSION[$name. '_class'])){
-          unset($_SESSION[$name. '_class']);
-        }
-
-        $_SESSION[$name] = $message;
-        $_SESSION[$name. '_class'] = $class;
-      } elseif(empty($message) && !empty($_SESSION[$name])){
-        $class = !empty($_SESSION[$name. '_class']) ? $_SESSION[$name. '_class'] : '';
-        echo '<div class="'.$class.'" id="msg-flash">'.$_SESSION[$name].'</div>';
+// Flash message helper
+// EXAMPLE - flash('register_success', 'You are now registered');
+// DISPLAY IN VIEW - echo flash('register_success');
+function flash($name = '', $message = '', $class = 'alert alert-success'){
+  if(!empty($name)){
+    if(!empty($message) && empty($_SESSION[$name])){
+      if(!empty($_SESSION[$name])){
         unset($_SESSION[$name]);
+      }
+
+      if(!empty($_SESSION[$name. '_class'])){
         unset($_SESSION[$name. '_class']);
       }
+
+      $_SESSION[$name] = $message;
+      $_SESSION[$name. '_class'] = $class;
+    } elseif(empty($message) && !empty($_SESSION[$name])){
+      $class = !empty($_SESSION[$name. '_class']) ? $_SESSION[$name. '_class'] : '';
+      echo '<div class="'.$class.'" id="msg-flash">'.$_SESSION[$name].'</div>';
+      unset($_SESSION[$name]);
+      unset($_SESSION[$name. '_class']);
     }
   }
+}
 
-  function isLoggedIn(){
-    if(isset($_SESSION['user_id'])){
-      return true;
-    } else {
-      return false;
+// CSRF Token Helper
+function create_csrf_token() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
-  }
+    $token = bin2hex(random_bytes(32));
+    $_SESSION['csrf_token'] = $token;
+    return $token;
+}
 
-  // --- CSRF Token Functions ---
+// Alias function to fix undefined function error from other parts of the app
+function generate_csrf_token(){
+    return create_csrf_token();
+}
 
-  /**
-   * Generates a CSRF token if one doesn't already exist for the session.
-   */
-  function generate_csrf_token() {
-    if (empty($_SESSION['csrf_token'])) {
-        // Use bin2hex and random_bytes for a cryptographically secure token
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-  }
+function validate_csrf_token($token) {
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
 
-  /**
-   * Returns the current CSRF token.
-   *
-   * @return string The CSRF token.
-   */
-  function get_csrf_token() {
-    return $_SESSION['csrf_token'];
-  }
-
-  /**
-   * Validates the submitted CSRF token against the one in the session.
-   *
-   * @param string $token The token submitted with the form.
-   * @return bool True if the token is valid, false otherwise.
-   */
-  function validate_csrf_token($token) {
-    // Use hash_equals for a timing-attack-safe comparison
-    if (isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
-        return true;
-    }
-    error_log('Invalid CSRF token received.');
-    return false;
-  }
+// Check if user is logged in
+function isLoggedIn(){
+    return isset($_SESSION['user_id']);
+}

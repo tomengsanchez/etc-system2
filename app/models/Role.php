@@ -1,87 +1,89 @@
 <?php
-class Role
-{
+class Role {
     private $db;
 
-    public function __construct()
-    {
-        $this->db = new Database;
+    public function __construct(){
+      $this->db = new Database;
     }
 
-    public function getRoles()
-    {
-        $this->db->query('SELECT * FROM roles ORDER BY name ASC');
+    public function getRoles(){
+      $this->db->query('SELECT * FROM roles');
 
-        $results = $this->db->resultSet();
+      $results = $this->db->resultSet();
 
-        return $results;
+      return $results;
     }
-
-    public function getRoleById($id)
-    {
+    
+    public function getRoleById($id){
         $this->db->query('SELECT * FROM roles WHERE id = :id');
         $this->db->bind(':id', $id);
+  
+        $row = $this->db->single();
+  
+        return $row;
+    }
+
+    /**
+     * Get a user's role by their user ID.
+     * Joins the users and roles tables.
+     * @param int $user_id The ID of the user.
+     * @return object|false The role object on success, false on failure.
+     */
+    public function getRoleByUserId($user_id){
+        $this->db->query('SELECT r.* FROM roles r JOIN users u ON r.id = u.role_id WHERE u.id = :user_id');
+        $this->db->bind(':user_id', $user_id);
 
         $row = $this->db->single();
 
         return $row;
     }
 
-    /**
-     * Add a new role to the database.
-     * @param array $data ['name' => 'RoleName']
-     * @return bool True on success, false on failure.
-     */
-    public function addRole($data)
-    {
-        $this->db->query('INSERT INTO roles (name) VALUES (:name)');
+    public function addRole($data){
+        $this->db->query('INSERT INTO roles (role_name) VALUES (:role_name)');
         // Bind values
-        $this->db->bind(':name', $data['name']);
-
+        $this->db->bind(':role_name', $data['role_name']);
+  
         // Execute
-        if ($this->db->execute()) {
-            return true;
+        if($this->db->execute()){
+          return true;
         } else {
-            return false;
+          return false;
         }
     }
 
-    /**
-     * Update an existing role in the database.
-     * @param array $data ['id' => 1, 'name' => 'UpdatedName']
-     * @return bool True on success, false on failure.
-     */
-    public function updateRole($data)
-    {
-        $this->db->query('UPDATE roles SET name = :name WHERE id = :id');
+    public function updateRole($data){
+        $this->db->query('UPDATE roles SET role_name = :role_name WHERE id = :id');
         // Bind values
         $this->db->bind(':id', $data['id']);
-        $this->db->bind(':name', $data['name']);
-
+        $this->db->bind(':role_name', $data['role_name']);
+  
         // Execute
-        if ($this->db->execute()) {
-            return true;
+        if($this->db->execute()){
+          return true;
         } else {
-            return false;
+          return false;
         }
     }
 
-    /**
-     * Delete a role from the database.
-     * @param int $id The ID of the role to delete.
-     * @return bool True on success, false on failure.
-     */
-    public function deleteRole($id)
-    {
+    public function deleteRole($id){
         $this->db->query('DELETE FROM roles WHERE id = :id');
         // Bind values
         $this->db->bind(':id', $id);
-
+  
         // Execute
-        if ($this->db->execute()) {
-            return true;
+        if($this->db->execute()){
+          return true;
         } else {
-            return false;
+          return false;
         }
+    }
+    
+    public function getRoleByRoleName($roleName){
+        $this->db->query('SELECT * FROM roles WHERE role_name = :role_name');
+        $this->db->bind(':role_name', $roleName);
+  
+        $row = $this->db->single();
+  
+        return $row;
     }
 }

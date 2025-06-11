@@ -12,6 +12,16 @@
   // Site Name
   define('SITENAME', 'Ecosys Training Center');
 
+   // Email Configuration - ** FILL THIS OUT **
+  define('SMTP_HOST', 'mail.ecosyscorp.ph'); // Your SMTP server address
+  define('SMTP_USERNAME', 'tomeng@ecosyscorp.ph'); // Your SMTP username (full email address)
+  define('SMTP_PASSWORD', 'Tomengmengdead#67'); // Your SMTP password or app-specific password
+  define('SMTP_PORT', 465); // Port for TLS (or 465 for SSL)
+  define('SMTP_SECURE', 'ssl'); // Encryption method: 'tls' or 'ssl'
+  define('SMTP_FROM_EMAIL', 'no-reply@ecosyscorp.ph'); // The "From" email address
+  define('SMTP_FROM_NAME', 'Ecosys Training Center'); // The "From" name
+
+
   // Load Helpers using the APPROOT constant for a reliable path
   require_once APPROOT . '/helpers/session_helper.php';
     require_once APPROOT . '/helpers/role_helper.php'; // <-- This line fixes the error

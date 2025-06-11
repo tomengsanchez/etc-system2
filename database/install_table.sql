@@ -68,3 +68,6 @@ CREATE TABLE `options` (
   UNIQUE KEY `uq_option_name` (`option_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+ALTER TABLE `users`
+ADD COLUMN `verification_code` VARCHAR(255) NULL AFTER `password`,
+ADD COLUMN `is_verified` TINYINT(1) NOT NULL DEFAULT 0 AFTER `verification_code`;

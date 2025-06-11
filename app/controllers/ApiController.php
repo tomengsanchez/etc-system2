@@ -1,67 +1,61 @@
 <?php
-class ApiController extends Controller
-{
-    private $userModel; // Property is now explicitly declared
+// app/controllers/ApiController.php
 
-    public function __construct()
-    {
-        // Headers
-        header('Access-Control-Allow-Origin: *');
-        header('Content-Type: application/json');
-        header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE');
-        header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, Authorization, X-Requested-With');
+// Load necessary helpers and models
+require_once '../app/helpers/jwt_helper.php';
 
+class ApiController extends Controller {
+    private $userModel;
+    private $roleModel;
+
+    public function __construct(){
         $this->userModel = $this->model('User');
+        $this->roleModel = $this->model('Role');
     }
 
-    public function login()
-    {
-        // Load JWT helper only when needed
-        require_once '../app/helpers/jwt_helper.php';
+    public function login(){
+        header('Content-Type: application/json');
+        
+        // Get the raw POST data
+        $json = file_get_contents('php://input');
+        $data = json_decode($json);
 
-        // Get raw posted data
-        $data = json_decode(file_get_contents("php://input"));
-
-        if (json_last_error() !== JSON_ERROR_NONE || !isset($data->email) || !isset($data->password)) {
+        // Check for required data
+        if (!isset($data->email) || !isset($data->password)) {
             http_response_code(400); // Bad Request
-            echo json_encode(['message' => 'Invalid input.']);
+            echo json_encode(['message' => 'Email and password are required.']);
             return;
         }
 
-        $loggedInUser = $this->userModel->login($data->email, $data->password);
+        // Check for user
+        if($this->userModel->findUserByEmail($data->email)){
+            // User found, check login
+            $loggedInUser = $this->userModel->login($data->email, $data->password);
 
-        if ($loggedInUser) {
-            // User authenticated, create JWT
-            $user_data = [
-                'id' => $loggedInUser->id,
-                'name' => $loggedInUser->name,
-                'email' => $loggedInUser->email,
-                'role' => $loggedInUser->role_name // Include user role
-            ];
-
-            $jwt = JWT_Helper::create_jwt($user_data);
-
-            http_response_code(200);
-            echo json_encode([
-                'message' => 'Successful login.',
-                'token' => $jwt
-            ]);
+            if($loggedInUser){
+                // Fetch user's role
+                $role = $this->roleModel->getRoleByUserId($loggedInUser->id);
+                
+                // Check if the user is an admin before generating a token
+                if ($role && isset($role->role_name) && $role->role_name == 'admin') {
+                    // User is an admin, generate JWT
+                    $jwt = create_jwt(['user_id' => $loggedInUser->id, 'role' => $role->role_name]);
+                    http_response_code(200); // OK
+                    echo json_encode(['token' => $jwt]);
+                } else {
+                    // User is not an admin, access denied
+                    http_response_code(403); // Forbidden
+                    echo json_encode(['message' => 'Access Denied. Administrator privileges required.']);
+                }
+            } else {
+                // Password incorrect
+                http_response_code(401); // Unauthorized
+                echo json_encode(['message' => 'Password incorrect.']);
+            }
         } else {
-            // Login failed
-            http_response_code(401);
-            echo json_encode(['message' => 'Login failed. Incorrect email or password.']);
+            // No user found
+            http_response_code(404); // Not Found
+            echo json_encode(['message' => 'User not found.']);
         }
-    }
-
-    /**
-     * Dispatches requests for /api/roles to the RoleApiController
-     */
-    public function roles()
-    {
-        // Manually load and instantiate the RoleApiController
-        require_once '../app/controllers/RoleApiController.php';
-        $roleApiController = new RoleApiController();
-        // Call its main entry point method
-        $roleApiController->index();
     }
 }

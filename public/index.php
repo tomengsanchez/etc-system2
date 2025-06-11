@@ -80,18 +80,20 @@ function handleError(int $severity, string $message, string $file, int $line): v
 set_exception_handler('handleException');
 set_error_handler('handleError');
 
-
+session_start();
 
 // Load Config
 require_once __DIR__ . '/../app/config/config.php';
 
 // Load Helpers
 require_once __DIR__ . '/../app/helpers/session_helper.php';
+require_once __DIR__ . '/../app/helpers/mail_helper.php'; // <-- ADD THIS LINE
 
 // Load Core Libraries
 require_once __DIR__ . '/../app/core/App.php';
 require_once __DIR__ . '/../app/core/Controller.php';
 require_once __DIR__ . '/../app/core/Database.php';
+
 
 
 // Bootstrap the application by instantiating the App class.
