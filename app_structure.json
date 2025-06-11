@@ -1,0 +1,60 @@
+{
+    "Name": "Ecosys Training Center Entrollment System",
+    "Description": "A system to manage the enrollment of students in various training programs offered by Ecosys.",
+    "Version": "1.0",
+    "Author": "Ecosys Team",
+    "License": "MIT",
+    "ProgrammingLanguage":{
+        "Primary": "PHP",
+        "Secondary": ["JavaScript", "HTML", "CSS"],
+        "Libraries": ["Bootstrap", "jQuery"]
+    },
+    "Security": {
+        "csrfProtection": true,
+        "xssProtection": true
+    },
+    "Components": [
+        {
+            "Name":"Instructor Management",
+            "Description": "Manages the instructors who will teach the courses, including their profiles and availability.",
+            "Version": "1.0",
+            "Dependencies": []
+        },
+        {
+            "Name": "Course Management",
+            "Description": "Manages the creation, updating, and deletion of training courses.",
+            "Version": "1.0",
+            "Dependencies": []
+        },
+        {
+            "Name": "Enrollment Management",
+            "Description": "Handles student enrollments in courses, including payment processing.",
+            "Version": "1.0",
+            "Dependencies": ["User Management", "Course Management"]
+        },
+        {
+            "Name": "Reporting",
+            "Description": "Generates reports on enrollments, course popularity, and user statistics.",
+            "Version": "1.0",
+            "Dependencies": ["Enrollment Management"]
+        },
+        {
+            "Name":"Settings Management",
+            "Description": "Manages system settings, including user roles and permissions.",
+            "Version": "1.0",
+            "Dependencies": []
+        },
+        {
+            "Name": "User Management",
+            "Description": "Handles user registration, authentication, and profile management.",
+            "Version": "1.0",
+            "Dependencies": []
+        },
+        {
+            "Name": "Notification System",
+            "Description": "Sends notifications to users about course updates, enrollment confirmations, and reminders.",
+            "Version": "1.0",
+            "Dependencies": ["User Management"]
+        }
+    ]
+}
